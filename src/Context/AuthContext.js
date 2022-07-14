@@ -45,51 +45,61 @@ export const AuthProvider = ({children}) => {
         navigate('/login')
     }
 
-    const updateToken = async () => {
-        let url = 'http://127.0.0.1:8000/api/token/refresh/'
-        const response = await fetch(url,{
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                "refresh": authTokens?.refresh
-            })
-        })
+    // const updateToken = async () => {
+    //     let url = 'http://127.0.0.1:8000/api/token/refresh/'
+    //     const response = await fetch(url,{
+    //         method: 'POST',
+    //         headers: {
+    //             'Content-Type': 'application/json',
+    //         },
+    //         body: JSON.stringify({
+    //             "refresh": authTokens?.refresh
+    //         })
+    //     })
 
-        let data = await response.json()
+    //     let data = await response.json()
 
-        if(response.status === 200) {
-            setAuthTokens(data)
-            setUser(jwtDecode(data.access))
-            localStorage.setItem('authTokens', JSON.stringify(data))
-        }else{
-            logOutUser()
-        }
+    //     if(response.status === 200) {
+    //         setAuthTokens(data)
+    //         setUser(jwtDecode(data.access))
+    //         localStorage.setItem('authTokens', JSON.stringify(data))
+    //     }else{
+    //         logOutUser()
+    //     }
 
-        if(loading){
-            setLoading(false)
-        }
-    }
+    //     if(loading){
+    //         setLoading(false)
+    //     }
+    // }
 
+    // useEffect(() => {
+    //     if(loading){
+    //         updateToken()
+    //     }
+    //   const interval = setInterval(() => {
+    //     if(authTokens)
+    //         updateToken()
+    //   }, 4500)
+    
+    //   return () => {
+    //     clearInterval(interval)
+    //   }
+    // }, [authTokens, loading])
+    
     useEffect(() => {
-        if(loading){
-            updateToken()
-        }
-      const interval = setInterval(() => {
+
         if(authTokens)
-            updateToken()
-      }, 4500)
-    
-      return () => {
-        clearInterval(interval)
-      }
+            setUser(jwtDecode(authTokens.access))
+        setLoading(false)
+
     }, [authTokens, loading])
-    
+
 
     const contextData = {
         user: user,
         authTokens: authTokens,
+        setAuthTokens: setAuthTokens,
+        setUser: setUser,
         loginUser: loginUser,
         logOutUser: logOutUser
     }
